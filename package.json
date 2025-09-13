@@ -1,0 +1,20 @@
+{
+  "name": "blood-donation-website",
+  "version": "1.0.0",
+  "description": "A blood donation website using Node.js, Express, and MySQL.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "dotenv": "^17.2.2",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.5"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

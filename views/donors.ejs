@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+<section class="results-section">
+    <h2>Available Donors</h2>
+    <% if (donors.length > 0) { %>
+        <p>Showing <%= donors.length %> result(s) for <%= blood_group || 'all' %> in <%= city || 'all cities' %>.</p>
+        <ul class="donor-list">
+            <% donors.forEach(donor => { %>
+                <li class="donor-item">
+                    <h3><%= donor.name %></h3>
+                    <p><strong>Blood Group:</strong> <%= donor.blood_group %></p>
+                    <p><strong>Location:</strong> <%= donor.city %></p>
+                    <p><strong>Contact:</strong> <%= donor.contact_phone %> | <%= donor.contact_email %></p>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p class="no-results">No donors found matching your criteria. Try a different search.</p>
+    <% } %>
+</section>
+<%- include('partials/footer') %>

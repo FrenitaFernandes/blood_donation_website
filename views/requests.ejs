@@ -1,0 +1,22 @@
+<%- include('partials/header') %>
+<section class="admin-section">
+    <h2>Blood Requests (Admin View)</h2>
+    <% if (requests && requests.length > 0) { %>
+        <p>Total requests: <%= requests.length %></p>
+        <ul class="request-list">
+            <% requests.forEach(request => { %>
+                <li class="request-item">
+                    <h3>Patient: <%= request.patient_name %></h3>
+                    <p><strong>Required Blood:</strong> <%= request.required_blood_group %></p>
+                    <p><strong>Location:</strong> <%= request.location %></p>
+                    <p><strong>Urgency:</strong> <%= request.urgency %></p>
+                    <p><strong>Contact:</strong> <%= request.contact_phone %></p>
+                    <p class="request-date"><em>Requested on: <%= new Date(request.created_at).toLocaleString() %></em></p>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p class="no-results">No blood requests have been submitted yet.</p>
+    <% } %>
+</section>
+<%- include('partials/footer') %>

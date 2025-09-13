@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+<section class="form-section">
+    <h2>Contact Us</h2>
+    <p class="contact-intro">Have questions, feedback, or need assistance? Please get in touch with us using the form below or through our social channels.</p>
+    <form action="/contact" method="POST">
+        <div class="form-group">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Message</button>
+    </form>
+    <div class="contact-info">
+        <h3>Connect With Us</h3>
+        <p><strong>Helpline:</strong> +91 98765 43210</p>
+        <div class="social-links">
+            <a href="#" class="social-link">Facebook</a>
+            <a href="#" class="social-link">Twitter</a>
+            <a href="#" class="social-link">Instagram</a>
+        </div>
+    </div>
+</section>
+<%- include('partials/footer') %>
