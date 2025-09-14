@@ -31,7 +31,8 @@ db.getConnection((err, connection) => {
 
 // Use routes (frontend-friendly style)
 app.use('/donors', donorRoutes);
-app.use('/requests', requestRoutes);
+// Correcting this line to match your form's action URL
+app.use('/request', requestRoutes);
 
 // Frontend routes
 app.get('/', (req, res) => {

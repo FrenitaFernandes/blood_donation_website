@@ -33,7 +33,7 @@ exports.findDonors = (req, res) => {
     let sql = 'SELECT * FROM donors WHERE is_available = TRUE';
     const values = [];
 
-    if (blood_group) {
+    if (blood_group && blood_group !== 'any') {
         sql += ' AND blood_group = ?';
         values.push(blood_group);
     }
@@ -47,6 +47,6 @@ exports.findDonors = (req, res) => {
             console.error(err);
             return res.send('Error fetching donors.');
         }
-        res.render('donors', { donors: results, blood_group, city });
+        res.render('donors', { donors: results, blood_group: blood_group === 'any' ? null : blood_group, city });
     });
 };

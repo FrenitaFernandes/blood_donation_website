@@ -1,0 +1,23 @@
+<%- include('partials/header') %>
+<section class="results-section">
+    <h2>Blood Requests Inbox</h2>
+    <% if (requests && requests.length > 0) { %>
+        <ul class="donor-list">
+            <% requests.forEach(function(request) { %>
+                <li class="donor-item">
+                    <h3><%= request.patient_name %></h3>
+                    <p><strong>Blood Group:</strong> <%= request.required_blood_group %></p>
+                    <p><strong>Location:</strong> <%= request.location %></p>
+                    <p><strong>Hospital Name:</strong> <%= request.hospital_name %></p>
+                    <p><strong>Units Required:</strong> <%= request.blood_units %></p>
+                    <p><strong>Urgency:</strong> <%= request.urgency %></p>
+                    <p><strong>Contact:</strong> <%= request.contact_phone %> | <%= request.contact_email %></p>
+                    <p><strong>Requested At:</strong> <%= request.created_at.toLocaleString ? request.created_at.toLocaleString() : request.created_at %></p>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p class="no-results">No blood requests found.</p>
+    <% } %>
+</section>
+<%- include('partials/footer') %>
