@@ -1,52 +1,51 @@
-const db = require('../models/db');
+const Donor = require('../models/Donor');
 
-exports.registerDonor = (req, res) => {
-    const { name, age, gender, blood_group, phone, email, city, is_available } = req.body;
-    const sql = `INSERT INTO donors (name, age, gender, blood_group, contact_phone, contact_email, city, is_available) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-    const values = [name, age, gender, blood_group, phone, email, city, is_available === 'on' ? 1 : 0];
-
-    db.query(sql, values, (err, result) => {
-        if (err) {
-            console.error(err);
-            return res.send('Error saving donor information.');
-        }
-        // 👇 After registration, show the donor list
-        res.redirect('/donors');
-    });
+exports.registerDonor = async (req, res) => {
+    try {
+        const { name, age, gender, blood_group, contact_phone, contact_email, city } = req.body;
+        const donor = await Donor.create({
+            name,
+            age,
+            gender,
+            blood_group,
+            contact_phone,
+            contact_email,
+            city,
+            is_available: true,
+        });
+        res.status(201).json({ message: 'Donor registered successfully!', id: donor._id });
+    } catch (err) {
+        console.error('Error registering donor:', err.message);
+        res.status(500).json({ message: 'Error saving donor information.' });
+    }
 };
 
-// ✅ Show all donors
-exports.listDonors = (req, res) => {
-    db.query("SELECT * FROM donors WHERE is_available = TRUE", (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.send("Error fetching donors.");
-        }
-        res.render("donors", { donors: results, blood_group: null, city: null });
-    });
+exports.listDonors = async (req, res) => {
+    try {
+        const donors = await Donor.find({ is_available: true }).sort({ createdAt: -1 });
+        res.json(donors);
+    } catch (err) {
+        console.error('Error fetching donors:', err.message);
+        res.status(500).json({ message: 'Error fetching donors.' });
+    }
 };
 
-// ✅ Find donors with filters
-exports.findDonors = (req, res) => {
-    const { blood_group, city } = req.query;
-    let sql = 'SELECT * FROM donors WHERE is_available = TRUE';
-    const values = [];
+exports.findDonors = async (req, res) => {
+    try {
+        const { blood_group, city } = req.query;
+        const filter = { is_available: true };
 
-    if (blood_group && blood_group !== 'any') {
-        sql += ' AND blood_group = ?';
-        values.push(blood_group);
-    }
-    if (city) {
-        sql += ' AND city = ?';
-        values.push(city);
-    }
-
-    db.query(sql, values, (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.send('Error fetching donors.');
+        if (blood_group && blood_group !== 'any') {
+            filter.blood_group = blood_group;
         }
-        res.render('donors', { donors: results, blood_group: blood_group === 'any' ? null : blood_group, city });
-    });
+        if (city) {
+            filter.city = new RegExp(city, 'i');
+        }
+
+        const donors = await Donor.find(filter).sort({ createdAt: -1 });
+        res.json(donors);
+    } catch (err) {
+        console.error('Error finding donors:', err.message);
+        res.status(500).json({ message: 'Error fetching donors.' });
+    }
 };

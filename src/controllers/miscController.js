@@ -1,39 +1,12 @@
-exports.homePage = (req, res) => {
-    res.render('home');
-};
+const Contact = require('../models/Contact');
 
-
-const db = require('../models/db');
-
-exports.aboutPage = (req, res) => {
-    db.query('SELECT COUNT(*) AS donorCount FROM donors', (err, donorResult) => {
-        if (err) {
-            console.error(err);
-            return res.render('about', { donorCount: 0 });
-        }
-        // You can add more queries for donations/lives touched if you track them
-        res.render('about', { donorCount: donorResult[0].donorCount });
-    });
-};
-
-exports.registerPage = (req, res) => {
-    res.render('register');
-};
-
-exports.findPage = (req, res) => {
-    res.render('find');
-};
-
-exports.requestPage = (req, res) => {
-    res.render('request');
-};
-
-exports.contactPage = (req, res) => {
-    db.query('SELECT COUNT(*) AS donorCount FROM donors', (err, donorResult) => {
-        if (err) {
-            console.error(err);
-            return res.render('contact', { donorCount: 0 });
-        }
-        res.render('contact', { donorCount: donorResult[0].donorCount });
-    });
+exports.submitContact = async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+    await Contact.create({ name, email, subject, message });
+    res.status(200).json({ message: 'Thank you for contacting us! We will get back to you soon.' });
+  } catch (err) {
+    console.error('Error saving contact message:', err.message);
+    res.status(500).json({ message: 'Error saving contact message.' });
+  }
 };

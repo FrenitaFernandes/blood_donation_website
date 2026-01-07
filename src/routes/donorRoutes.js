@@ -9,6 +9,7 @@ router.post('/register', donorController.registerDonor);
 router.get('/', donorController.listDonors);
 
 // Search donors with filters
+router.get('/search', donorController.findDonors);
 router.get('/find', donorController.findDonors);
 
 module.exports = router;

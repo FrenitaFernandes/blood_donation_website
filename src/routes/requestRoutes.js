@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const requestController = require('../controllers/requestController');
 
-// Route to handle the submission of a new blood request form.
-
-// Route to handle the submission of a new blood request form.
+// Create a new blood request
+router.post('/create', requestController.submitRequest);
 router.post('/submit', requestController.submitRequest);
 
-// Route to display all blood requests in inbox
+// Get all blood requests
+router.get('/all', requestController.getInboxRequests);
 router.get('/inbox', requestController.getInboxRequests);
 
 module.exports = router;

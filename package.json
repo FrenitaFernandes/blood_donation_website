@@ -1,22 +1,25 @@
 {
   "name": "blood-donation-website",
   "version": "1.0.0",
-  "description": "A blood donation website using Node.js, Express, and MySQL.",
+  "description": "A blood donation website using Node.js, Express, and MongoDB.",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "test:mongo": "node test-mongodb.js",
+    "migrate": "node migrate-to-mongodb.js",
     "setup-db": "node src/scripts/setup-database.js",
     "db:create": "node src/scripts/setup-database.js",
     "db:seed": "node src/scripts/seed-database.js"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
-    "mysql": "^2.18.1",
-    "mysql2": "^3.14.5"
+    "mongoose": "^8.20.2",
+    "mysql": "^2.18.1"
   },
   "keywords": [],
   "author": "",

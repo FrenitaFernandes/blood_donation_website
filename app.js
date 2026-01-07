@@ -1,74 +1,57 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const path = require('path');
-const db = require('./src/models/db');
+const { connectDB } = require('./src/models/db');
 const donorRoutes = require('./src/routes/donorRoutes');
 const requestRoutes = require('./src/routes/requestRoutes');
+const miscRoutes = require('./src/routes/miscRoutes');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // Middleware
+app.use(cors());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files from the 'public' directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Set EJS as the view engine
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-// Connect to MySQL
-db.getConnection((err, connection) => {
-    if (err) {
-        console.error('Error connecting to MySQL:', err.stack);
-        return;
-    }
-    console.log('Connected to the database as id ' + connection.threadId);
-    connection.release();
-});
-
-// Use routes (frontend-friendly style)
+// API Routes
 app.use('/donors', donorRoutes);
-// Correcting this line to match your form's action URL
 app.use('/request', requestRoutes);
+app.post('/contact', require('./src/controllers/miscController').submitContact);
 
-// Frontend routes
-app.get('/', (req, res) => {
-    res.render('home');
-});
-
-app.get('/about', (req, res) => {
-    res.render('about');
-});
-
-app.get('/register', (req, res) => {
-    res.render('register');
-});
-
-app.get('/find', (req, res) => {
-    res.render('find');
-});
-
-app.get('/request', (req, res) => {
-    res.render('request');
-});
-
-app.get('/contact', (req, res) => {
-    res.render('contact');
-});
-
-app.get('/requests', (req, res) => {
-    res.render('requests');
-});
-
-// API status route (optional, just to test backend)
+// Health check endpoint
 app.get('/api', (req, res) => {
-    res.send('Blood Donation API is running. Use /donors and /requests endpoints.');
+    res.json({ message: 'Blood Donation API is running!', endpoints: { donors: '/donors', request: '/request', contact: '/contact' } });
 });
 
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+// Default route
+app.get('/', (req, res) => {
+    res.json({ message: 'Blood Donation API Server', version: '1.0.0', visit: 'http://localhost:3000' });
 });
+
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({ error: 'Endpoint not found', path: req.path });
+});
+
+// Connect to MongoDB and start server
+const startServer = async () => {
+    try {
+        await connectDB();
+        app.listen(PORT, () => {
+            console.log(`\n🚀 API Server running on http://localhost:${PORT}`);
+            console.log(`📱 Visit React app at http://localhost:3000\n`);
+        });
+    } catch (err) {
+        console.error('❌ Failed to start server:', err.message);
+        console.error('\nTroubleshooting:');
+        console.error('1. Is MongoDB running? Check Services or start mongod');
+        console.error('2. Check MONGO_URI in .env file');
+        console.error('3. Verify port 27017 is available\n');
+        process.exit(1);
+    }
+};
+
+startServer();

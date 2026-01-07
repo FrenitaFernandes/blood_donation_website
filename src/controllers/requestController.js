@@ -1,27 +1,31 @@
-const db = require('../models/db');
+const BloodRequest = require('../models/BloodRequest');
 
-exports.submitRequest = (req, res) => {
-    const { patient_name, required_blood_group, location, hospital_name, blood_units, urgency, contact_phone, contact_email } = req.body;
-    const sql = `INSERT INTO blood_requests (patient_name, required_blood_group, location, hospital_name, blood_units, urgency, contact_phone, contact_email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-    const values = [patient_name, required_blood_group, location, hospital_name, blood_units, urgency, contact_phone, contact_email];
-
-    db.query(sql, values, (err, result) => {
-        if (err) {
-            console.error(err);
-            return res.send('Error saving blood request.');
-        }
-        res.redirect('/');
-    });
+exports.submitRequest = async (req, res) => {
+    try {
+        const { patient_name, required_blood_group, location, hospital_name, blood_units, urgency, contact_phone, contact_email } = req.body;
+        const request = await BloodRequest.create({
+            patient_name,
+            required_blood_group,
+            location,
+            hospital_name,
+            blood_units: blood_units || 1,
+            urgency: urgency || 'Medium',
+            contact_phone,
+            contact_email,
+        });
+        res.status(201).json({ message: 'Blood request created successfully!', id: request._id });
+    } catch (err) {
+        console.error('Error submitting request:', err.message);
+        res.status(500).json({ message: 'Error saving blood request.' });
+    }
 };
 
-// Controller to fetch all blood requests for inbox
-exports.getInboxRequests = (req, res) => {
-    const sql = 'SELECT * FROM blood_requests ORDER BY created_at DESC';
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.send('Error fetching blood requests.');
-        }
-        res.render('inbox', { requests: results });
-    });
+exports.getInboxRequests = async (req, res) => {
+    try {
+        const requests = await BloodRequest.find({}).sort({ createdAt: -1 });
+        res.json(requests);
+    } catch (err) {
+        console.error('Error fetching requests:', err.message);
+        res.status(500).json({ message: 'Error fetching blood requests.' });
+    }
 };
