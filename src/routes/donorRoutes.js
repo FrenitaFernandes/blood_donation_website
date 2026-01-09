@@ -12,4 +12,13 @@ router.get('/', donorController.listDonors);
 router.get('/search', donorController.findDonors);
 router.get('/find', donorController.findDonors);
 
+// Get all donors (including unavailable) - for admin
+router.get('/admin/all', donorController.getAllDonors);
+
+// Update donor availability
+router.put('/:id/availability', donorController.updateDonorAvailability);
+
+// Delete donor profile
+router.delete('/:id', donorController.deleteDonor);
+
 module.exports = router;

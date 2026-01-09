@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-
-const API_URL = 'http://localhost:3001';
+import { API_URL } from '../config/api';
 
 const BLOOD_GROUPS = ['Any','O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
 
@@ -93,6 +92,24 @@ function FindDonors() {
     }
   };
 
+  const handleAvailabilityChange = async (donorId, isAvailable) => {
+    try {
+      const response = await axios.put(`${API_URL}/donors/${donorId}/availability`, {
+        is_available: isAvailable
+      });
+      
+      // Update local state
+      setDonors(donors.map(d => 
+        d._id === donorId ? { ...d, is_available: isAvailable } : d
+      ));
+      
+      setMessage(isAvailable ? '✅ Donor marked as available!' : '✅ Donor marked as unavailable!');
+      setTimeout(() => setMessage(''), 2000);
+    } catch (error) {
+      setMessage('❌ Error updating availability: ' + error.message);
+    }
+  };
+
   // Get unique blood groups in results
   const getBloodGroupsInCity = () => {
     const bloodGroups = new Set(donors.map(d => d.blood_group));
@@ -179,14 +196,40 @@ function FindDonors() {
 
       <div className="donors-list">
         {donors.map(donor => (
-          <div key={donor._id} className="donor-card">
-            <h3>{donor.name}</h3>
-            <p><strong>Blood Group:</strong> <span style={{ fontSize: '1.2rem', color: '#d32f2f', fontWeight: 'bold' }}>{donor.blood_group}</span></p>
+          <div 
+            key={donor._id} 
+            className={`donor-card ${!donor.is_available ? 'unavailable' : ''}`}
+            style={{ opacity: donor.is_available ? 1 : 0.6 }}
+          >
+            <div className="donor-header-row">
+              <h3 style={{ color: !donor.is_available ? '#999' : '#c41e3a' }}>
+                {!donor.is_available && '⏸ '}{donor.name}
+              </h3>
+              <div className="availability-toggle">
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={donor.is_available}
+                  onChange={(e) => handleAvailabilityChange(donor._id, e.target.checked)}
+                />
+                <span className="slider"></span>
+              </label>
+              <span className="availability-label">
+                {donor.is_available ? '✅ Enable' : '⏸ Disable'}
+              </span>
+            </div>
+            </div>
+            <p><strong>Blood Group:</strong> <span style={{ fontSize: '1.2rem', color: !donor.is_available ? '#999' : '#d32f2f', fontWeight: 'bold' }}>{donor.blood_group}</span></p>
             <p><strong>Age:</strong> {donor.age}</p>
             <p><strong>City:</strong> {donor.city}</p>
             <p><strong>Phone:</strong> {donor.contact_phone}</p>
             <p><strong>Email:</strong> {donor.contact_email}</p>
-            <p><strong>Available:</strong> {donor.is_available ? 'Yes' : 'No'}</p>
+            <p><strong>Gender:</strong> {donor.gender}</p>
+            {!donor.is_available && (
+              <p style={{ color: '#d32f2f', fontWeight: 'bold', marginTop: '10px' }}>
+                ⚠️ This donor is currently unavailable for donation
+              </p>
+            )}
           </div>
         ))}
       </div>

@@ -6,6 +6,7 @@ const path = require('path');
 const { connectDB } = require('./src/models/db');
 const donorRoutes = require('./src/routes/donorRoutes');
 const requestRoutes = require('./src/routes/requestRoutes');
+const adminRoutes = require('./src/routes/adminRoutes');
 const miscRoutes = require('./src/routes/miscRoutes');
 
 const app = express();
@@ -19,11 +20,12 @@ app.use(express.urlencoded({ extended: true }));
 // API Routes
 app.use('/donors', donorRoutes);
 app.use('/request', requestRoutes);
+app.use('/admin', adminRoutes);
 app.post('/contact', require('./src/controllers/miscController').submitContact);
 
 // Health check endpoint
 app.get('/api', (req, res) => {
-    res.json({ message: 'Blood Donation API is running!', endpoints: { donors: '/donors', request: '/request', contact: '/contact' } });
+    res.json({ message: 'Blood Donation API is running!', endpoints: { donors: '/donors', request: '/request', admin: '/admin', contact: '/contact' } });
 });
 
 // Default route

@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "client:start": "npm --prefix client start",
+    "dev:all": "concurrently -n API,UI -c green,blue \"npm run dev\" \"npm --prefix client start\"",
     "test:mongo": "node test-mongodb.js",
     "migrate": "node migrate-to-mongodb.js",
     "setup-db": "node src/scripts/setup-database.js",
@@ -13,15 +15,20 @@
     "db:seed": "node src/scripts/seed-database.js"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.20.2",
     "mysql": "^2.18.1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
 }

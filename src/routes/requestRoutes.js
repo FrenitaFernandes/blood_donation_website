@@ -10,4 +10,13 @@ router.post('/submit', requestController.submitRequest);
 router.get('/all', requestController.getInboxRequests);
 router.get('/inbox', requestController.getInboxRequests);
 
+// Get requests by status
+router.get('/status', requestController.getRequestsByStatus);
+
+// Update request status
+router.put('/:id/status', requestController.updateRequestStatus);
+
+// Delete request
+router.delete('/:id', requestController.deleteRequest);
+
 module.exports = router;
